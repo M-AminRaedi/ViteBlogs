@@ -25,7 +25,6 @@ const SingleBlogPage = () => {
             </section>
         );
     }
-
     const handleDelete = () => {
         if (blog) {
             dispatch(deleteApiBlog(blog.id));
@@ -33,7 +32,6 @@ const SingleBlogPage = () => {
             navigate("/");
         }
     };
-
     return (
         <section>
             <article className="blog">

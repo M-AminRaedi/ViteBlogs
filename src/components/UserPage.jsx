@@ -1,17 +1,14 @@
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUserById } from "../reducers/userSlice";
-import { selectAllBlogs } from "../reducers/blogSlice";
+import { selectAllBlogs, selectUserBlogs } from "../reducers/blogSlice";
 
 const UserPage = () => {
     const { userId } = useParams();
 
     const user = useSelector((state) => selectUserById(state, userId));
-
-    const userBlogs = useSelector((state) => {
-        const allBlogs = selectAllBlogs(state);
-        return allBlogs.filter((blog) => blog.user === userId);
-    });
+    const userBlogs = selectAllBlogs((state) => selectUserBlogs(state, userId)
+    );
 
     const blogTitles = userBlogs.map((blog) => (
         <li key={blog.id}>
