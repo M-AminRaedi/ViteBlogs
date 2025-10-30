@@ -3,7 +3,6 @@ import {useParams, Link, useNavigate} from "react-router-dom";
 import {
     selectBlogById,
     deleteApiBlog,
-    blogDeleted,
 } from "../reducers/blogSlice";
 import {useSelector, useDispatch} from "react-redux";
 import ShowAuthor from "./Servise/ShowAuthor";
