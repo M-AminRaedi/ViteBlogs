@@ -1,63 +1,65 @@
 // --- import ---
-import {useParams, Link, useNavigate} from "react-router-dom";
-import {
-    selectBlogById,
-    deleteApiBlog,
-} from "../reducers/blogSlice";
-import {useSelector, useDispatch} from "react-redux";
-import ShowAuthor from "./Servise/ShowAuthor";
-import ShowTime from "./Servise/ShowTime";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { ShowAuthor, ShowTime } from "./Servise/index.js";
 import ReactionButtons from "./ReactionButtons.jsx";
+import { useGetBlogQuery } from "../Api/ApiSlice.js";
+import Spinner from "./Spinner/spinner.jsx";
 
 const SingleBlogPage = () => {
-    const {blogId} = useParams();
-
-    const blog = useSelector((state) => selectBlogById(state, blogId));
-
+    const { blogId } = useParams();
+    const { data: blog, isFetching, isSuccess } = useGetBlogQuery(blogId);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     if (!blog) {
         return (
             <section>
-                <h2>پستی که دنبالش میگردی وجود نداره دوست من 🤗</h2>
+                <h2>پستی که دنبالش می‌گردی وجود نداره دوست من 🤗</h2>
             </section>
         );
     }
-    const handleDelete = () => {
-        if (blog) {
-            dispatch(deleteApiBlog(blog.id));
-            // dispatch(blogDeleted({ id: blog.id }));
-            navigate("/");
-        }
-    };
-    return (
-        <section>
+
+    let content;
+
+    if (isFetching) {
+        content = <Spinner text="در حال بارگذاری ..." />;
+    } else if (isSuccess) {
+        content = (
             <article className="blog">
                 <h2>{blog.title}</h2>
 
-                <div style={{marginTop: "10px", marginRight: "20px"}}>
-                    <ShowTime timestamp={blog.date}/>
-                    <ShowAuthor userId={blog.user}/>
+                <div style={{ marginTop: "10px", marginRight: "20px" }}>
+                    <ShowTime timestamp={blog.date} />
+                    <ShowAuthor userId={blog.user} />
                 </div>
 
                 <p className="blog-content">{blog.content}</p>
 
-                <ReactionButtons blog={blog}/>
+                <ReactionButtons blog={blog} />
 
                 <Link to={`/editBlog/${blog.id}`} className="button">
                     ویرایش پست
                 </Link>
+
                 <button
                     className="muted-button"
-                    style={{marginRight: "10px"}}
+                    style={{ marginRight: "10px" }}
                     onClick={handleDelete}
                 >
                     حذف پست
                 </button>
             </article>
-        </section>
-    );
+        );
+    }
+
+    const handleDelete = () => {
+        if (blog) {
+            // dispatch(deleteApiBlog(blog.id));
+            // dispatch(blogDeleted({ id: blog.id }));
+            navigate("/");
+        }
+    };
+
+    return <section>{content}</section>;
 };
 
 export default SingleBlogPage;
